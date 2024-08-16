@@ -6,7 +6,7 @@ const { Select } = require("enquirer");
 const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
-const {ensureDirSync} = require('fs-extra');
+const { ensureDirSync } = require("fs-extra");
 const transformer = require("hermes-profile-transformer").default;
 
 const INDEX_BUNDLE_URL =
@@ -45,9 +45,12 @@ if (!options.output) {
   process.exit(1);
 }
 
+const tempDirPath = path.resolve("~/temp");
+ensureDirSync(tempDirPath);
+
 function downloadFile(url, filename) {
   return new Promise((resolve, reject) => {
-    const filePath = path.join(__dirname, "temp", filename);
+    const filePath = path.join(tempDirPath, filename);
 
     axios({
       method: "get",
@@ -75,7 +78,7 @@ function downloadFile(url, filename) {
 
 function pullProfile(profilePath) {
   return new Promise((resolve, reject) => {
-    const pullPath = path.join(__dirname, "temp");
+    const pullPath = tempDirPath;
     const command = `adb pull ${profilePath} ${pullPath}`;
 
     exec(command, (error, stdout, stderr) => {
@@ -121,14 +124,10 @@ async function selectProfile(profilesArray) {
 }
 
 function convertProfile(profileName) {
-  const hermesCpuProfilePath = path.join(__dirname, "temp", profileName);
+  const hermesCpuProfilePath = path.join(tempDirPath, profileName);
   ("./sampling-profiler-trace7493917654879703191.cpuprofile");
-  const sourceMapPath = path.join(__dirname, "temp", "index.map");
-  const sourceMapBundleFileName = path.join(
-    __dirname,
-    "temp",
-    "index.bundle.js"
-  );
+  const sourceMapPath = path.join(tempDirPath, "index.map");
+  const sourceMapBundleFileName = path.join(tempDirPath, "index.bundle.js");
 
   const convertedFileName = `${profileName.split(".")[0]}-converted.json`;
   ensureDirSync(options.output);
@@ -174,13 +173,20 @@ function listCpuProfiles(packageName) {
     const selectedProfileName = selectedProfile[2];
     console.log(`Processing profile: ${selectedProfilePath}`);
 
-    pullProfile(selectedProfilePath);
+    try {
+      await pullProfile(selectedProfilePath);
 
-    console.log("Downloading bundle...");
-    await downloadFile(`${INDEX_BUNDLE_URL}${options.app}`, "index.bundle.js");
-    console.log("Downloading map...");
-    await downloadFile(`${INDEX_MAP_URL}${options.app}`, "index.map");
-
+      console.log("Downloading bundle...");
+      await downloadFile(
+        `${INDEX_BUNDLE_URL}${options.app}`,
+        "index.bundle.js"
+      );
+      console.log("Downloading map...");
+      await downloadFile(`${INDEX_MAP_URL}${options.app}`, "index.map");
+    } catch (err) {
+      console.error(err);
+      return;
+    }
     console.log("Converting profile...");
     convertProfile(selectedProfileName);
   });

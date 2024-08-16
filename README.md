@@ -20,7 +20,7 @@ npm install -g react-native-profile-convert-cli
 Or you can run it directly using `npx`:
 
 ```
-npx rnpc
+npx react-native-profile-convert-cli
 ```
 
 ## Usage
