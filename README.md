@@ -25,6 +25,16 @@ npx react-native-profile-convert-cli
 
 ## Usage
 
+To use the **React Native Profile Convert CLI**, you first need to launch your React Native app on an Android emulator or device. If your React Native app is unable to load the bundle, you can fix this by running the following command in your terminal:
+
+$$$
+adb reverse tcp:8081 tcp:8081
+$$$
+
+This command ensures that the app can connect to the Metro bundler running on your development machine.
+
+Once the app is running and the bundle is loading correctly, open the React Native Developer Menu by either shaking the device, pressing `Cmd + M` on the emulator, or by pressing the `d` key in the terminal where Metro is running. From the Developer Menu, select the "Sampling Profiler" option to start profiling. After you've finished profiling, the CPU profile will be saved on your device. You can then use this CLI tool to pull the saved profile, convert it to a Chrome-compatible format, and analyze it for performance optimization.
+
 You can use the CLI tool with the following options:
 
 ```
