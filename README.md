@@ -14,7 +14,7 @@
 To use this tool, you can install it globally using npm:
 
 ```
-npm install -g react-native-profile-convert
+npm install -g rnpc
 ```
 
 Or you can run it directly using `npx`:
