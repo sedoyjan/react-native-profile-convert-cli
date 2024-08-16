@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const os = require("os");
 const { Command } = require("commander");
 const { exec } = require("child_process");
 const { Select } = require("enquirer");
@@ -45,7 +46,7 @@ if (!options.output) {
   process.exit(1);
 }
 
-const tempDirPath = path.resolve("~/temp");
+const tempDirPath = path.join(os.tmpdir(), "rnpc_temp");
 ensureDirSync(tempDirPath);
 
 function downloadFile(url, filename) {
@@ -62,7 +63,7 @@ function downloadFile(url, filename) {
         response.data.pipe(writer);
 
         writer.on("finish", () => {
-          console.log(`File downloaded and saved as: ${filePath}`);
+          console.log(`✔ ${filename} downloaded`);
           resolve(filePath);
         });
 
@@ -125,7 +126,6 @@ async function selectProfile(profilesArray) {
 
 function convertProfile(profileName) {
   const hermesCpuProfilePath = path.join(tempDirPath, profileName);
-  ("./sampling-profiler-trace7493917654879703191.cpuprofile");
   const sourceMapPath = path.join(tempDirPath, "index.map");
   const sourceMapBundleFileName = path.join(tempDirPath, "index.bundle.js");
 
