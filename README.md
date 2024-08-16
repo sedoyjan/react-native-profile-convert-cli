@@ -1,6 +1,6 @@
-# React Native Profile Convert
+# React Native Profile Convert CLI
 
-**React Native Profile Convert** is a command-line tool designed to streamline the process of converting Hermes CPU profiles from an Android device or emulator into Chrome-compatible profiles for performance analysis. The tool automates the process of pulling CPU profiles from `adb`, downloading necessary bundles and source maps, and converting the profiles into a format that can be easily analyzed using Chrome DevTools.
+**React Native Profile Convert CLI** is a command-line tool designed to streamline the process of converting Hermes CPU profiles from an Android device or emulator into Chrome-compatible profiles for performance analysis. The tool automates the process of pulling CPU profiles from `adb`, downloading necessary bundles and source maps, and converting the profiles into a format that can be easily analyzed using Chrome DevTools.
 
 ## Features
 
@@ -14,7 +14,7 @@
 To use this tool, you can install it globally using npm:
 
 ```
-npm install -g rnpc
+npm install -g react-native-profile-convert-cli
 ```
 
 Or you can run it directly using `npx`:
@@ -70,4 +70,4 @@ Contributions are welcome! If you find a bug or have a feature request, please o
 
 ## Author
 
-[Your Name]
+Sergei Grigorev

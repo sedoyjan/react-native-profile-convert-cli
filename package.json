@@ -1,9 +1,9 @@
 {
-  "name": "rnpc",
+  "name": "react-native-profile-convert-cli",
   "version": "1.0.0",
-  "description": "React Native Profile Convert is a CLI tool designed to streamline the performance profiling workflow for React Native applications",
+  "description": "React Native Profile Convert CLI is a tool designed to streamline the performance profiling workflow for React Native applications",
   "main": "index.js",
-  "repository": "https://github.com/sedoyjan/react-native-profile-convert.git",
+  "repository": "https://github.com/sedoyjan/react-native-profile-convert-cli.git",
   "author": "Sergei Grigorev <sedoyjan@live.com>",
   "license": "MIT",
   "private": false,
