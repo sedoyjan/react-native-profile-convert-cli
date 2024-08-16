@@ -27,9 +27,9 @@ npx react-native-profile-convert-cli
 
 To use the **React Native Profile Convert CLI**, you first need to launch your React Native app on an Android emulator or device. If your React Native app is unable to load the bundle, you can fix this by running the following command in your terminal:
 
-$$$
+```
 adb reverse tcp:8081 tcp:8081
-$$$
+```
 
 This command ensures that the app can connect to the Metro bundler running on your development machine.
 
