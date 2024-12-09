@@ -2,7 +2,7 @@
 
 const os = require("os");
 const { Command } = require("commander");
-const { exec } = require("child_process");
+const { exec, spawn } = require("child_process");
 const { Select } = require("enquirer");
 const fs = require("fs");
 const path = require("path");
@@ -77,25 +77,36 @@ function downloadFile(url, filename) {
   });
 }
 
-function pullProfile(profilePath) {
+function pullProfile(profilePath, packageName) {
   return new Promise((resolve, reject) => {
-    const pullPath = tempDirPath;
-    const command = `adb pull ${profilePath} ${pullPath}`;
+    const pullPath = path.join(tempDirPath, path.basename(profilePath));
+    const outputFile = fs.createWriteStream(pullPath);
 
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing adb pull: ${error.message}`);
-        reject();
+    const catProcess = spawn("adb", [
+      "exec-out",
+      `run-as ${packageName} sh -c "cd cache && cat ${profilePath}"`,
+    ]);
+
+    catProcess.stdout.pipe(outputFile);
+
+    // Handle stream errors
+    catProcess.stdout.on("error", (error) => {
+      console.error("Error reading file:", error.message);
+      reject(error);
+    });
+
+    outputFile.on("error", (error) => {
+      console.error("Error writing file:", error.message);
+      reject(error);
+    });
+
+    // Resolve when the process is complete
+    catProcess.on("close", (code) => {
+      if (code !== 0) {
+        reject(new Error(`cat process exited with code ${code}`));
         return;
       }
-
-      if (stderr) {
-        console.error(`stderr: ${stderr}`);
-        reject();
-        return;
-      }
-
-      console.log(`✔ Profile pulled successfully`);
+      console.log(`Profile successfully written to ${pullPath}`);
       resolve();
     });
   });
@@ -143,7 +154,7 @@ function convertProfile(profileName) {
 }
 
 function listCpuProfiles(packageName) {
-  const command = `adb shell ls -lt /data/user/0/${packageName}/cache/*.cpuprofile`;
+  const command = `adb shell 'run-as ${packageName} sh -c "cd cache && ls -lt *.cpuprofile"'`;
 
   exec(command, async (error, stdout, stderr) => {
     if (error) {
@@ -174,7 +185,7 @@ function listCpuProfiles(packageName) {
     console.log(`Processing profile: ${selectedProfilePath}`);
 
     try {
-      await pullProfile(selectedProfilePath);
+      await pullProfile(selectedProfilePath, packageName);
 
       console.log("Downloading bundle...");
       await downloadFile(
